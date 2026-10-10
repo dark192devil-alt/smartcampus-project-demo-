@@ -1,0 +1,6 @@
+{% extends "student/_layout.html" %}
+{% block title %}Events | SmartCampus{% endblock %}
+{% block student_content %}
+<div class="portal-header"><p class="eyebrow">Campus life</p><h1>Events</h1><p class="muted">Upcoming moments, talks, and activities around campus.</p></div>
+<div class="event-grid mt-4">{% for event in events %}<article class="event-card"><div class="event-date"><strong>{{ event.event_date.strftime('%d') }}</strong><span>{{ event.event_date.strftime('%b') }}</span></div><div><span class="subject-label">Campus event</span><h2>{{ event.title }}</h2><p>{{ event.description }}</p><div class="event-meta"><span><i class="bi bi-clock"></i> {{ event.event_date.strftime('%d %b %Y, %H:%M') }}</span><span><i class="bi bi-geo-alt"></i> {{ event.location }}</span></div></div></article>{% else %}<div class="portal-panel empty-state"><i class="bi bi-stars"></i><h3>No upcoming events</h3><p>New college events will appear here.</p></div>{% endfor %}</div>
+{% endblock %}

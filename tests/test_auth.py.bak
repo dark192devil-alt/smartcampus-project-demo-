@@ -1,0 +1,49 @@
+import os
+
+from app import create_app
+
+
+def run_auth_checks():
+    password = os.getenv("DEMO_PASSWORD")
+    if not password:
+        raise RuntimeError("Set DEMO_PASSWORD before running this test.")
+
+    app = create_app()
+    users = [
+        ("student@smartcampus.test", "/student/dashboard", "/faculty/dashboard"),
+        ("faculty@smartcampus.test", "/faculty/dashboard", "/admin/dashboard"),
+        ("admin@smartcampus.test", "/admin/dashboard", "/student/dashboard"),
+    ]
+
+    unauthenticated = app.test_client()
+    response = unauthenticated.get("/admin/dashboard")
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]
+
+    invalid = unauthenticated.post(
+        "/login",
+        data={"email": "student@smartcampus.test", "password": "wrong"},
+    )
+    assert invalid.status_code == 401
+
+    for email, dashboard, forbidden_route in users:
+        client = app.test_client()
+        login_response = client.post(
+            "/login",
+            data={"email": email, "password": password},
+            follow_redirects=False,
+        )
+        assert login_response.status_code == 302
+        assert login_response.headers["Location"].endswith(dashboard)
+        assert client.get(dashboard).status_code == 200
+        assert client.get(forbidden_route).status_code == 403
+        assert client.get("/profile").status_code == 200
+
+        logout_response = client.get("/logout")
+        assert logout_response.status_code == 302
+        assert client.get(dashboard).status_code == 302
+
+
+if __name__ == "__main__":
+    run_auth_checks()
+    print("auth tests: passed")

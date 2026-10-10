@@ -1,0 +1,6 @@
+{% extends "student/_layout.html" %}
+{% block title %}Exams | SmartCampus{% endblock %}
+{% block student_content %}
+<div class="portal-header"><p class="eyebrow">Assessment calendar</p><h1>Exams</h1><p class="muted">Your enrolled-subject examination schedule.</p></div>
+<div class="portal-panel mt-4"><div class="panel-heading"><div><p class="eyebrow">Schedule</p><h2>Upcoming first</h2></div></div>{% if exams %}<div class="exam-list">{% for item in exams %}<article class="exam-row {% if not item.is_upcoming %}exam-past{% endif %}"><div class="exam-date"><strong>{{ item.exam.exam_date.strftime('%d') }}</strong><span>{{ item.exam.exam_date.strftime('%b %Y') }}</span></div><div class="flex-grow-1"><span class="subject-label">{{ item.exam.exam_type|capitalize }}</span><h3>{{ item.exam.title }}</h3><p>{{ item.exam.subject.name }} · {{ item.exam.start_time.strftime('%H:%M') }}–{{ item.exam.end_time.strftime('%H:%M') }} · Room {{ item.exam.room }}</p></div><span class="status-badge {% if item.is_upcoming %}status-submitted{% else %}status-past{% endif %}">{{ 'Upcoming' if item.is_upcoming else 'Past' }}</span></article>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-pencil-square"></i><h3>No exams scheduled</h3><p>Your exam schedule will appear here when it is published.</p></div>{% endif %}</div>
+{% endblock %}

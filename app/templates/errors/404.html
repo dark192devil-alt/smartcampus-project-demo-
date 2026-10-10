@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found | SmartCampus{% endblock %}
+
+{% block content %}
+<main class="page-shell centered-page">
+    <p class="eyebrow">404</p>
+    <h1>Page not found</h1>
+    <p class="muted">The page you requested does not exist.</p>
+    <a class="text-link" href="{{ url_for('main.home') }}">Return to SmartCampus</a>
+</main>
+{% endblock %}

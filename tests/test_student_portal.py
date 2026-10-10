@@ -1,0 +1,70 @@
+import os
+
+from app import create_app
+
+
+STUDENT_ROUTES = [
+    "/student/dashboard",
+    "/student/attendance",
+    "/student/assignments",
+    "/student/exams",
+    "/student/timetable",
+    "/student/notices",
+    "/student/events",
+    "/student/assistant",
+]
+
+
+def login(client, email):
+    response = client.post(
+        "/login",
+        data={"email": email, "password": os.environ["DEMO_PASSWORD"]},
+    )
+    assert response.status_code == 302
+
+
+def run_portal_checks():
+    app = create_app()
+
+    anonymous = app.test_client()
+    for route in STUDENT_ROUTES:
+        response = anonymous.get(route)
+        assert response.status_code == 302
+        assert "/login" in response.headers["Location"]
+
+    student = app.test_client()
+    login(student, "student@smartcampus.test")
+    for route in STUDENT_ROUTES:
+        assert student.get(route).status_code == 200
+
+    page_expectations = {
+        "/student/dashboard": ["Student", "Information Technology (IT)", "Overall attendance"],
+        "/student/attendance": ["Subject-wise view", "100.0%"],
+        "/student/assignments": ["Introduction to Journal Entries", "Submitted"],
+        "/student/exams": ["Information Technology (IT) Internal Test", "Upcoming"],
+        "/student/timetable": ["Information Technology (IT)", "Monday"],
+        "/student/notices": ["Welcome to SmartCampus"],
+        "/student/events": ["Commerce Exhibition Orientation"],
+        "/student/assistant": ["AI Assistant", "In development"],
+    }
+    for route, expected_text in page_expectations.items():
+        body = student.get(route).get_data(as_text=True)
+        for text in expected_text:
+            assert text in body
+
+    filtered = student.get("/student/assignments?status=pending")
+    assert "No assignments match" in filtered.get_data(as_text=True)
+
+    faculty = app.test_client()
+    login(faculty, "faculty@smartcampus.test")
+    for route in STUDENT_ROUTES:
+        assert faculty.get(route).status_code == 403
+
+    admin = app.test_client()
+    login(admin, "admin@smartcampus.test")
+    for route in STUDENT_ROUTES:
+        assert admin.get(route).status_code == 403
+
+
+def test_student_portal_checks():
+    run_portal_checks()

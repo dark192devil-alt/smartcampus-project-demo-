@@ -1,0 +1,6 @@
+{% extends "student/_layout.html" %}
+{% block title %}Timetable | SmartCampus{% endblock %}
+{% block student_content %}
+<div class="portal-header"><p class="eyebrow">Weekly rhythm</p><h1>Timetable</h1><p class="muted">Your classes, rooms, and teaching periods at a glance.</p></div>
+<div class="portal-panel mt-4">{% if timetable %}<div class="table-responsive"><table class="table portal-table timetable-table align-middle"><thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th></tr></thead><tbody>{% for entry in timetable %}<tr><td><strong>{{ entry.day }}</strong></td><td>{{ entry.start_time.strftime('%H:%M') }}–{{ entry.end_time.strftime('%H:%M') }}</td><td>{{ entry.subject.name }}</td><td>{{ entry.faculty.user.name }}</td><td><span class="room-chip">{{ entry.room }}</span></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><i class="bi bi-calendar3"></i><h3>No timetable published</h3><p>Your enrolled subjects will appear here once the timetable is available.</p></div>{% endif %}</div>
+{% endblock %}

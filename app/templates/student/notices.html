@@ -1,0 +1,6 @@
+{% extends "student/_layout.html" %}
+{% block title %}Notices | SmartCampus{% endblock %}
+{% block student_content %}
+<div class="portal-header"><p class="eyebrow">Stay informed</p><h1>Notices</h1><p class="muted">College updates shared with the student community.</p></div>
+<div class="notice-list mt-4">{% for item in notices %}<article class="notice-card"><div class="notice-card-top"><div><span class="subject-label">{{ item.category }}</span><h2>{{ item.notice.title }}</h2></div><span class="priority-badge priority-{{ item.priority|lower }}">{{ item.priority }}</span></div><p>{{ item.notice.summary or item.notice.content }}</p><footer><span><i class="bi bi-calendar3"></i> {{ item.notice.published_at.strftime('%d %B %Y') }}</span></footer></article>{% else %}<div class="portal-panel empty-state"><i class="bi bi-megaphone"></i><h3>No notices yet</h3><p>There are no student notices to show right now.</p></div>{% endfor %}</div>
+{% endblock %}

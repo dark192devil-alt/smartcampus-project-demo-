@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Admin dashboard | SmartCampus{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <p class="eyebrow">Admin portal</p>
+    <h1>Welcome, {{ current_user.name }}</h1>
+    <p class="muted">Your admin dashboard will be added in a future stage.</p>
+    <a class="text-link" href="{{ url_for('auth.profile') }}">View profile</a>
+    <span class="separator">|</span>
+    <a class="text-link" href="{{ url_for('auth.logout') }}">Log out</a>
+</main>
+{% endblock %}

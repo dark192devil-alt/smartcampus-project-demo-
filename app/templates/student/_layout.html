@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="student-app">
+    <aside class="student-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="studentSidebar">
+        <div class="brand-lockup">
+            <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+            <span><strong>SmartCampus</strong><small>Student portal</small></span>
+        </div>
+        <nav class="student-nav" aria-label="Student navigation">
+            <a class="{% if request.endpoint == 'student.dashboard' %}active{% endif %}" href="{{ url_for('student.dashboard') }}"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+            <a class="{% if request.endpoint == 'student.attendance' %}active{% endif %}" href="{{ url_for('student.attendance') }}"><i class="bi bi-bar-chart-line-fill"></i> Attendance</a>
+            <a class="{% if request.endpoint == 'student.assignments' %}active{% endif %}" href="{{ url_for('student.assignments') }}"><i class="bi bi-journal-check"></i> Assignments</a>
+            <a class="{% if request.endpoint == 'student.exams' %}active{% endif %}" href="{{ url_for('student.exams') }}"><i class="bi bi-pencil-square"></i> Exams</a>
+            <a class="{% if request.endpoint == 'student.timetable' %}active{% endif %}" href="{{ url_for('student.timetable') }}"><i class="bi bi-calendar3"></i> Timetable</a>
+            <a class="{% if request.endpoint == 'student.notices' %}active{% endif %}" href="{{ url_for('student.notices') }}"><i class="bi bi-megaphone-fill"></i> Notices</a>
+            <a class="{% if request.endpoint == 'student.events' %}active{% endif %}" href="{{ url_for('student.events') }}"><i class="bi bi-stars"></i> Events</a>
+            <a class="{% if request.endpoint == 'student.assistant' %}active{% endif %}" href="{{ url_for('student.assistant') }}"><i class="bi bi-chat-square-text-fill"></i> AI Assistant <span class="nav-soon">Soon</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{{ url_for('auth.profile') }}"><i class="bi bi-person-circle"></i> {{ current_user.name }}</a>
+            <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Log out</a>
+        </div>
+    </aside>
+    <main class="student-main">
+        <button class="mobile-nav-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentSidebar" aria-label="Open navigation"><i class="bi bi-list"></i></button>
+        {% block student_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

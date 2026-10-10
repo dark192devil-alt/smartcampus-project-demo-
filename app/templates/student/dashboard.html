@@ -1,0 +1,28 @@
+{% extends "student/_layout.html" %}
+
+{% block title %}Student dashboard | SmartCampus{% endblock %}
+
+{% block student_content %}
+<div class="portal-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+    <div><p class="eyebrow mb-2">Student portal</p><h1>Good morning, {{ current_user.name.split()[0] }}.</h1><p class="muted mb-0">Here is your academic snapshot for today.</p></div>
+    <div class="date-stamp"><i class="bi bi-calendar-event"></i> {{ today.strftime('%A, %d %B %Y') }}</div>
+</div>
+
+<section class="student-summary-grid mt-4">
+    <article class="summary-card summary-card-accent"><span class="summary-icon"><i class="bi bi-mortarboard-fill"></i></span><div><small>Course</small><strong>{{ student.course.name }}</strong><span>{{ student.year }} · Division {{ student.division }}</span></div></article>
+    <article class="summary-card"><span class="summary-icon soft-blue"><i class="bi bi-person-vcard-fill"></i></span><div><small>Student ID</small><strong>{{ student.student_number }}</strong><span>{{ student.user.email }}</span></div></article>
+    <article class="summary-card"><span class="summary-icon soft-orange"><i class="bi bi-bar-chart-fill"></i></span><div><small>Overall attendance</small><strong>{{ attendance.overall.percentage }}%</strong><span>{{ attendance.overall.attended }} of {{ attendance.overall.conducted }} classes</span></div></article>
+</section>
+
+<section class="row g-4 mt-1">
+    <div class="col-xl-7"><div class="portal-panel h-100"><div class="panel-heading"><div><p class="eyebrow">Today</p><h2>Next on your timetable</h2></div><a href="{{ url_for('student.timetable') }}">Full timetable <i class="bi bi-arrow-up-right"></i></a></div>{% if today_timetable %}<div class="today-list">{% for entry in today_timetable %}<div class="today-item"><span class="time-pill">{{ entry.start_time.strftime('%H:%M') }}</span><div><strong>{{ entry.subject.name }}</strong><small>{{ entry.start_time.strftime('%H:%M') }}–{{ entry.end_time.strftime('%H:%M') }} · Room {{ entry.room }}</small></div><i class="bi bi-chevron-right"></i></div>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-calendar-x"></i><p>No classes scheduled for today.</p></div>{% endif %}</div></div>
+    <div class="col-xl-5"><div class="portal-panel h-100"><div class="panel-heading"><div><p class="eyebrow">Attention</p><h2>Attendance overview</h2></div><a href="{{ url_for('student.attendance') }}">Details <i class="bi bi-arrow-up-right"></i></a></div>{% if attendance.has_records %}<div class="attendance-ring"><strong>{{ attendance.overall.percentage }}<small>%</small></strong><span>overall attendance</span></div><div class="subject-mini-list">{% for item in attendance.by_subject[:3] %}<div><div class="d-flex justify-content-between"><span>{{ item.subject.name }}</span><b>{{ item.percentage }}%</b></div><div class="progress"><div class="progress-bar" style="width: {{ item.percentage }}%"></div></div></div>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-bar-chart"></i><p>No attendance records yet.</p></div>{% endif %}</div></div>
+</section>
+
+<section class="row g-4 mt-1">
+    <div class="col-lg-7"><div class="portal-panel"><div class="panel-heading"><div><p class="eyebrow">Coursework</p><h2>Pending assignments</h2></div><a href="{{ url_for('student.assignments') }}">View all <i class="bi bi-arrow-up-right"></i></a></div>{% if pending_assignments %}<div class="assignment-mini-list">{% for item in pending_assignments[:4] %}<div class="assignment-mini"><div class="assignment-symbol"><i class="bi bi-journal-text"></i></div><div class="flex-grow-1"><strong>{{ item.assignment.title }}</strong><small>{{ item.assignment.subject.name }} · Due {{ item.assignment.due_date.strftime('%d %b %Y') }}</small></div><span class="status-badge status-pending">Pending</span></div>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-check2-circle"></i><p>You have no pending assignments.</p></div>{% endif %}</div></div>
+    <div class="col-lg-5"><div class="portal-panel"><div class="panel-heading"><div><p class="eyebrow">Updates</p><h2>Latest notices</h2></div><a href="{{ url_for('student.notices') }}">All notices <i class="bi bi-arrow-up-right"></i></a></div>{% if notices %}<div class="notice-mini-list">{% for item in notices %}<div><span class="notice-dot"></span><div><strong>{{ item.notice.title }}</strong><small>{{ item.notice.published_at.strftime('%d %b %Y') }} · {{ item.category }}</small></div></div>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-megaphone"></i><p>No notices at the moment.</p></div>{% endif %}</div></div>
+</section>
+
+<section class="quick-links mt-4"><p class="eyebrow">Shortcuts</p><div class="quick-link-grid"><a href="{{ url_for('student.exams') }}"><i class="bi bi-pencil-square"></i><span>Upcoming exams</span><i class="bi bi-arrow-up-right ms-auto"></i></a><a href="{{ url_for('student.events') }}"><i class="bi bi-stars"></i><span>College events</span><i class="bi bi-arrow-up-right ms-auto"></i></a><a href="{{ url_for('student.assistant') }}"><i class="bi bi-chat-square-text-fill"></i><span>Ask the assistant</span><span class="nav-soon ms-auto">Soon</span></a></div></section>
+{% endblock %}
