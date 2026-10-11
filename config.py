@@ -8,7 +8,14 @@ load_dotenv()
 
 
 BASE_DIR = Path(__file__).resolve().parent
-INSTANCE_DIR = BASE_DIR / "instance"
+
+
+def ensure_instance_directory(instance_dir):
+    instance_dir.mkdir(parents=True, exist_ok=True)
+    return instance_dir
+
+
+INSTANCE_DIR = ensure_instance_directory(BASE_DIR / "instance")
 DATABASE_PATH = INSTANCE_DIR / "smartcampus.db"
 SMARTCAMPUS_ENV = os.getenv("SMARTCAMPUS_ENV", "development").lower()
 configured_secret = os.getenv("SECRET_KEY")
