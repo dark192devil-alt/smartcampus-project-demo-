@@ -18,7 +18,14 @@ def create_app(config_class=Config):
             db.create_all()
             from .seed.seed_data import update_demo_passwords
 
-            update_demo_passwords()
+            passwords_updated = update_demo_passwords()
+            if passwords_updated:
+                print("SmartCampus demo password update: success")
+            else:
+                print(
+                    "SmartCampus demo password update: skipped — "
+                    "DEMO_PASSWORD missing or demo accounts incomplete"
+                )
 
         @login_manager.user_loader
         def load_user(user_id):
