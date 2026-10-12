@@ -16,6 +16,9 @@ def create_app(config_class=Config):
 
         if app.config.get("AUTO_CREATE_SCHEMA"):
             db.create_all()
+            from .seed.seed_data import update_demo_passwords
+
+            update_demo_passwords()
 
         @login_manager.user_loader
         def load_user(user_id):
