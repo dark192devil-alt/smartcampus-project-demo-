@@ -22,10 +22,7 @@ def create_app(config_class=Config):
             if passwords_updated:
                 print("SmartCampus demo password update: success")
             else:
-                print(
-                    "SmartCampus demo password update: skipped — "
-                    "DEMO_PASSWORD missing or demo accounts incomplete"
-                )
+                print("SmartCampus demo password update: skipped (reason logged above)")
 
         @login_manager.user_loader
         def load_user(user_id):

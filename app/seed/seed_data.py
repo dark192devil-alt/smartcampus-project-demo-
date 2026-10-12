@@ -33,10 +33,15 @@ DEMO_EMAILS = {
 def update_demo_passwords():
     demo_password = os.getenv("DEMO_PASSWORD")
     if not demo_password:
+        print("SmartCampus demo password update: DEMO_PASSWORD missing or empty")
         return False
 
     users = User.query.filter(User.email.in_(DEMO_EMAILS.values())).all()
     if len(users) != len(DEMO_EMAILS):
+        print(
+            "SmartCampus demo password update: Expected demo account count: "
+            f"{len(users)} of {len(DEMO_EMAILS)}"
+        )
         return False
 
     for user in users:
