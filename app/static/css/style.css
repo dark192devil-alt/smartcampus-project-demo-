@@ -40,6 +40,11 @@ form { margin-top: 1.75rem; }
 label { display: block; margin: 1rem 0 0.4rem; font: 700 0.85rem Arial, sans-serif; }
 input { width: 100%; padding: 0.85rem 0.9rem; color: var(--ink); background: #fff; border: 1px solid var(--line); font: 1rem Arial, sans-serif; }
 input:focus { outline: 3px solid #b9ded8; border-color: var(--accent); }
+.password-field { position: relative; }
+.password-field input { padding-right: 3rem; }
+.password-toggle { position: absolute; top: 50%; right: 0.35rem; width: 2.25rem; height: 2.25rem; display: grid; place-items: center; margin: 0; padding: 0; color: var(--muted); background: transparent; border: 0; font-size: 1rem; transform: translateY(-50%); }
+.password-toggle:hover { color: var(--ink); background: transparent; }
+.password-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 button { width: 100%; margin-top: 1.5rem; padding: 0.9rem 1rem; color: white; background: var(--accent); border: 0; font: 700 0.95rem Arial, sans-serif; cursor: pointer; }
 button:hover { background: var(--accent-dark); }
 
