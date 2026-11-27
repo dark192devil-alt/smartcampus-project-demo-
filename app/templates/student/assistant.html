@@ -1,5 +1,110 @@
 {% extends "student/_layout.html" %}
 {% block title %}AI Assistant | SmartCampus{% endblock %}
 {% block student_content %}
-<div class="assistant-placeholder"><div class="assistant-orbit"><i class="bi bi-stars"></i></div><p class="eyebrow">Coming next</p><h1>Your campus assistant.</h1><p class="muted">The SmartCampus AI Assistant will help you find your timetable, understand attendance, and catch up on important notices. It will be connected securely in a future stage.</p><span class="status-badge status-pending"><i class="bi bi-clock"></i> In development</span></div>
+<section class="assistant-page" aria-labelledby="assistant-title">
+    <div class="assistant-heading">
+        <div>
+            <p class="eyebrow">SmartCampus support</p>
+            <h1 id="assistant-title">Your campus assistant</h1>
+            <p class="muted">Ask about student-visible notices, upcoming events, courses, or how to use the portal.</p>
+        </div>
+        <button class="btn btn-outline-secondary assistant-reset" id="assistant-reset" type="button"><i class="bi bi-arrow-counterclockwise"></i> New chat</button>
+    </div>
+
+    <div class="assistant-notice"><i class="bi bi-shield-check"></i><span>Replies use published campus information. The assistant cannot see your personal attendance, grades, or submissions. Please don't include private information.</span></div>
+
+    <div class="assistant-chat" aria-live="polite" aria-label="Conversation">
+        <div class="assistant-messages" id="assistant-messages">
+            <div class="assistant-message assistant-message-bot"><span class="assistant-avatar"><i class="bi bi-stars"></i></span><div><strong>SmartCampus Assistant</strong><p>Hi! I can help you find campus information or navigate the student portal. What would you like to know?</p></div></div>
+        </div>
+        <div class="assistant-suggestions" id="assistant-suggestions">
+            <button type="button" data-prompt="What upcoming events are listed?">Upcoming events</button>
+            <button type="button" data-prompt="What notices are available for students?">Student notices</button>
+            <button type="button" data-prompt="Where can I check my attendance?">Find attendance</button>
+        </div>
+        <form class="assistant-form" id="assistant-form">
+            <label class="visually-hidden" for="assistant-input">Your message</label>
+            <textarea id="assistant-input" name="message" rows="1" maxlength="1000" placeholder="Ask a campus question…" required></textarea>
+            <button type="submit" aria-label="Send message"><i class="bi bi-arrow-up"></i></button>
+        </form>
+        <p class="assistant-status muted" id="assistant-status">AI replies may be incorrect. Check important details with college staff.</p>
+    </div>
+</section>
+<script>
+(() => {
+    const form = document.getElementById('assistant-form');
+    const input = document.getElementById('assistant-input');
+    const messages = document.getElementById('assistant-messages');
+    const status = document.getElementById('assistant-status');
+    const suggestions = document.getElementById('assistant-suggestions');
+    const history = [];
+    let busy = false;
+
+    function addMessage(role, text) {
+        const row = document.createElement('div');
+        row.className = `assistant-message ${role === 'assistant' ? 'assistant-message-bot' : 'assistant-message-user'}`;
+        if (role === 'assistant') {
+            const avatar = document.createElement('span');
+            avatar.className = 'assistant-avatar';
+            avatar.innerHTML = '<i class="bi bi-stars"></i>';
+            row.appendChild(avatar);
+        }
+        const bubble = document.createElement('div');
+        const label = document.createElement('strong');
+        label.textContent = role === 'assistant' ? 'SmartCampus Assistant' : 'You';
+        const content = document.createElement('p');
+        content.textContent = text;
+        bubble.append(label, content);
+        row.appendChild(bubble);
+        messages.appendChild(row);
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function sendMessage(text) {
+        if (busy || !text.trim()) return;
+        const question = text.trim();
+        addMessage('user', question);
+        input.value = '';
+        suggestions.hidden = true;
+        busy = true;
+        input.disabled = true;
+        status.textContent = 'Thinking…';
+        try {
+            const response = await fetch('{{ url_for("student.assistant_chat") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: question, history: history.slice(-8) })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'The assistant could not reply. Please try again.');
+            addMessage('assistant', data.reply);
+            history.push({ role: 'user', content: question }, { role: 'assistant', content: data.reply });
+            status.textContent = 'AI replies may be incorrect. Check important details with college staff.';
+        } catch (error) {
+            addMessage('assistant', error.message || 'The assistant could not reply. Please try again.');
+            status.textContent = 'Your message was not saved. You can try again.';
+        } finally {
+            busy = false;
+            input.disabled = false;
+            input.focus();
+        }
+    }
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        sendMessage(input.value);
+    });
+    suggestions.addEventListener('click', event => {
+        const button = event.target.closest('[data-prompt]');
+        if (button) sendMessage(button.dataset.prompt);
+    });
+    document.getElementById('assistant-reset').addEventListener('click', () => window.location.reload());
+    input.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+})();
+</script>
 {% endblock %}

@@ -45,7 +45,7 @@ def run_portal_checks():
         "/student/timetable": ["Information Technology (IT)", "Monday"],
         "/student/notices": ["Welcome to SmartCampus"],
         "/student/events": ["Commerce Exhibition Orientation"],
-        "/student/assistant": ["AI Assistant", "In development"],
+        "/student/assistant": ["AI Assistant", "Your campus assistant", "New chat"],
     }
     for route, expected_text in page_expectations.items():
         body = student.get(route).get_data(as_text=True)

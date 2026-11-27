@@ -35,3 +35,13 @@ gunicorn --bind 0.0.0.0:$PORT run:app
 ```
 
 `GET /health` returns a minimal unauthenticated health response.
+
+## Stage 13: AI Student Assistant
+
+The student portal assistant uses Google's Gemini Interactions API over HTTPS. The app sends only the student's question, the short in-memory chat history, and student-visible college records (course/subject names, published student notices, and upcoming event details). It does not send attendance, grades, submissions, or account details. Gemini conversation storage is disabled for these requests.
+
+For local use, copy `.env.example` to `.env` and set `GEMINI_API_KEY` to your private key. Keep `.env` out of Git and never put the key in browser code or chat. The optional `GEMINI_MODEL` defaults to `gemini-2.5-flash`.
+
+For Render, open the web service's **Environment** settings and add `GEMINI_API_KEY` with your key as its value. You may also set `GEMINI_MODEL` if needed. Save the settings; Render will redeploy the existing service. The current Gunicorn start command and database setup do not change. If the key is missing, the student portal still loads and the chat shows a setup message.
+
+The assistant is a quick exhibition feature, not a source of official decisions. It uses only records visible to students and directs students to the portal or college staff when the available records do not answer a question. Gemini quotas and model availability depend on Google's current account and API settings.

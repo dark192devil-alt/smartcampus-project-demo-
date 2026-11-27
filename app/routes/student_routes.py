@@ -1,6 +1,6 @@
 from datetime import date
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user
 
 from app.models import Subject
@@ -14,6 +14,7 @@ from app.services.student_service import (
     get_student,
     get_timetable,
 )
+from app.services.ai_service import AssistantError, ask_gemini
 from app.utils.decorators import role_required
 
 
@@ -82,3 +83,21 @@ def events():
 @role_required("student")
 def assistant():
     return render_template("student/assistant.html")
+
+
+@student_bp.route("/assistant/chat", methods=["POST"])
+@role_required("student")
+def assistant_chat():
+    if not request.is_json:
+        return jsonify(error="Send your message as JSON."), 400
+
+    payload = request.get_json(silent=True) or {}
+    if not isinstance(payload, dict):
+        return jsonify(error="Send a valid message."), 400
+    try:
+        answer = ask_gemini(payload.get("message"), payload.get("history", []))
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    except AssistantError as error:
+        return jsonify(error=str(error)), 503
+    return jsonify(reply=answer)

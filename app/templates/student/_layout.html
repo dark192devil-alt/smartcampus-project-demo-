@@ -15,7 +15,7 @@
             <a class="{% if request.endpoint == 'student.timetable' %}active{% endif %}" href="{{ url_for('student.timetable') }}"><i class="bi bi-calendar3"></i> Timetable</a>
             <a class="{% if request.endpoint == 'student.notices' %}active{% endif %}" href="{{ url_for('student.notices') }}"><i class="bi bi-megaphone-fill"></i> Notices</a>
             <a class="{% if request.endpoint == 'student.events' %}active{% endif %}" href="{{ url_for('student.events') }}"><i class="bi bi-stars"></i> Events</a>
-            <a class="{% if request.endpoint == 'student.assistant' %}active{% endif %}" href="{{ url_for('student.assistant') }}"><i class="bi bi-chat-square-text-fill"></i> AI Assistant <span class="nav-soon">Soon</span></a>
+            <a class="{% if request.endpoint in ('student.assistant', 'student.assistant_chat') %}active{% endif %}" href="{{ url_for('student.assistant') }}"><i class="bi bi-chat-square-text-fill"></i> AI Assistant</a>
         </nav>
         <div class="sidebar-footer">
             <a href="{{ url_for('auth.profile') }}"><i class="bi bi-person-circle"></i> {{ current_user.name }}</a>
