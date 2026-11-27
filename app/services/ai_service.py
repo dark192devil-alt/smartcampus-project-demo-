@@ -4,6 +4,8 @@ from datetime import datetime
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from flask import current_app
+
 from app.models import Course, Event, Notice, Subject
 
 
@@ -153,7 +155,21 @@ def ask_gemini(question, history=None, college_context=None):
             result = json.loads(response.read().decode("utf-8"))
         return _extract_response(result)
     except HTTPError as error:
-        # Do not return provider error bodies, which may include request details.
+        provider_status = "unknown"
+        try:
+            error_body = json.loads(error.read().decode("utf-8"))
+            provider_error = error_body.get("error", {})
+            if isinstance(provider_error, dict):
+                provider_status = str(provider_error.get("status", "unknown"))[:80]
+        except (AttributeError, TypeError, UnicodeDecodeError, json.JSONDecodeError):
+            pass
+        # Log only the HTTP code and Google's short status label, never the key,
+        # request text, or full provider response.
+        current_app.logger.warning(
+            "Gemini API request rejected (HTTP %s, status %s).",
+            error.code,
+            provider_status,
+        )
         if error.code == 429:
             raise AssistantError("The assistant is busy right now. Please wait a moment and try again.") from None
         raise AssistantError("The assistant could not answer right now. Please try again shortly.") from None
