@@ -2,6 +2,7 @@ from app import create_app
 from app.extensions import db
 from app.seed.seed_data import (
     seed_database,
+    update_demo_assignment,
     update_demo_passwords,
     update_demo_student_name,
 )
@@ -15,6 +16,7 @@ with app.app_context():
     seeded = seed_database()
     passwords_updated = update_demo_passwords()
     student_name_updated = update_demo_student_name()
+    assignment_updated = update_demo_assignment()
     if seeded:
         print("Database initialized and sample data inserted.")
     else:
@@ -23,3 +25,5 @@ with app.app_context():
         print("Demo account passwords updated from DEMO_PASSWORD.")
     if student_name_updated:
         print("Demo student name updated to Student.")
+    if assignment_updated:
+        print("Demo assignment updated to IT coursework.")

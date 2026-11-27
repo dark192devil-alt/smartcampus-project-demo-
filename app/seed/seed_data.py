@@ -60,6 +60,25 @@ def update_demo_student_name():
     return True
 
 
+def update_demo_assignment():
+    assignment = (
+        Assignment.query.join(Faculty, Assignment.faculty_id == Faculty.id)
+        .join(User, Faculty.user_id == User.id)
+        .filter(
+            User.email == DEMO_EMAILS["faculty"],
+            Assignment.title == "Introduction to Journal Entries",
+        )
+        .first()
+    )
+    if assignment is None:
+        return False
+
+    assignment.title = "Create a Simple HTML Webpage"
+    assignment.description = "Build a basic webpage using HTML headings, paragraphs, and lists."
+    db.session.commit()
+    return True
+
+
 def seed_database():
     if Course.query.first() is not None:
         return False
@@ -116,8 +135,8 @@ def seed_database():
     assignment = Assignment(
         subject_id=subject.id,
         faculty_id=faculty.id,
-        title="Introduction to Journal Entries",
-        description="Prepare five example journal entries.",
+        title="Create a Simple HTML Webpage",
+        description="Build a basic webpage using HTML headings, paragraphs, and lists.",
         due_date=date.today() + timedelta(days=14),
     )
     event = Event(

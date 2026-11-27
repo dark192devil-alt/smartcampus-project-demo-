@@ -17,6 +17,7 @@ def create_app(config_class=Config):
         if app.config.get("AUTO_CREATE_SCHEMA"):
             db.create_all()
             from .seed.seed_data import (
+                update_demo_assignment,
                 seed_database,
                 update_demo_passwords,
                 update_demo_student_name,
@@ -33,6 +34,7 @@ def create_app(config_class=Config):
                 print("SmartCampus demo password update: skipped (reason logged above)")
 
             update_demo_student_name()
+            update_demo_assignment()
 
         @login_manager.user_loader
         def load_user(user_id):
