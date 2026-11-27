@@ -10,7 +10,7 @@ from app.models import Course, Event, Notice, Subject
 
 
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 MAX_HISTORY_MESSAGES = 10
 MAX_MESSAGE_LENGTH = 1000
 

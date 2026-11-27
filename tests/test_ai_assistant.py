@@ -44,7 +44,7 @@ def test_gemini_request_uses_private_header_and_disables_storage(monkeypatch):
     assert request.get_header("X-goog-api-key") == "test-key"
     assert "test-key" not in request.data.decode("utf-8")
     assert payload["store"] is False
-    assert payload["model"] == "gemini-2.5-flash"
+    assert payload["model"] == "gemini-3.8-flash"
     assert "Course: HSC Commerce." in payload["input"]
     assert "attendance" in payload["system_instruction"]
 
